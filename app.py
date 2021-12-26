@@ -128,6 +128,7 @@ def app():
     app_running = True
     while app_running:
         choice = menu()
+#add book
         if choice == '1':
             title = input('Title: ')
             author = input('Author: ')
@@ -148,9 +149,11 @@ def app():
             session.commit() 
             print('Book added!')
             time.sleep(1.5)
+#list books
         elif choice == '2':
             for book in session.query(Book):
                 print(f'{book.id} | {book.title} | {book.author} | {book.published_date} | {book.price}')
+#search books
         elif choice == '3':
             id_options = []
             for book in session.query(Book):
@@ -169,6 +172,7 @@ def app():
             \rPublished: {the_book.published_date}
             \rPrice: ${the_book.price /100}''')
             sub_choice = submenu()
+#edit book
             if sub_choice == '1':
                 the_book.title = edit_check('Title', the_book.title)
                 the_book.author = edit_check('Author', the_book.author)
@@ -177,13 +181,25 @@ def app():
                 session.commit()
                 print('Book updated!')
                 time.sleep(1.5)
+#delete book
             elif sub_choice == '2':
                 session.delete(the_book)
                 session.commit()
                 print('Book deleted!')
                 time.sleep(1.5)
+#book analysis
         elif choice == '4':
-            pass
+            oldest_book = session.query(Book).order_by(Book.published_date).first()
+            newest_book = session.query(Book).order_by(Book.published_date.desc()).first()
+            total_books = session.query(Book).count()
+            python_books = session.query(Book).filter(Book.title.like('%Python%')).count()
+            print(f'''
+                \n ***BOOK ANALYSIS***
+                \rOldest Book: {oldest_book}
+                \rNewest Book: {newest_book}
+                \rTotal Books: {total_books}
+                \rNumber of Python Books: {python_books}''')
+            input('\nENTER to return to main menu')
         else:
             print('bye')
             app_running = False
